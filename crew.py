@@ -8,6 +8,7 @@ from crewai import Agent, Task, Crew, Process, LLM
 from crewai.tasks.conditional_task import ConditionalTask
 from tools import *
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 
@@ -48,7 +49,7 @@ if config:
     VERBOSE_MODE = config.get("verbose", True)
     AGENT_CONFIGS = config.get("agent_configs", {})
 else:
-    MODEL_NAME = "gemini/gemini-2.5-flash-lite"
+    MODEL_NAME = "gemini/gemini-3.1-flash-lite"
     VERBOSE_MODE = True
     AGENT_CONFIGS = {}
 
@@ -88,7 +89,12 @@ analyze_motivation = AnalyzeMotivationTool()
 assess_risk = RiskAssessmentTool()
 search_support = SearchSupportTool()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+try:
+    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+except:
+    from dotenv import load_dotenv
+    load_dotenv()
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 llm = LLM(
     model=MODEL_NAME,
